@@ -1,0 +1,211 @@
+schema {
+    query: QueryType
+}
+
+# The query root of Cerebros's GraphQL interface.
+type QueryType {
+
+    # Return the asset information
+    assets(touchpoint: String!, rangeKey: Int!, country: String, deviceType: String): [AssetMetric]
+
+    # Return the asset touchpoint information
+    assetTouchpoints(assetType: AssetType!, assetId: String!, rangeKey: Int!, country: String, deviceType: String): [TouchpointMetric]
+
+    # Return the blogs metric of a given blog identified uniquely by its projectId, touchpoint and blogId.
+    blog(touchpoint: String!, assetId: String!, rangeKey: Int!, country: String, deviceType: String): BlogMetric
+
+    # Return a list of blogs.
+    blogs(rangeKey: Int!, start: Int!, size: Int!, keywords: String, sort: Sort!): AssetMetrics
+
+    # Return the document library metric of a given documentLibrary identified uniquely by its projectId, touchpoint and documentId.
+    document(touchpoint: String!, assetId: String!, rangeKey: Int!, country: String, deviceType: String): DocumentMetric
+
+    # Return a list of document libraries.
+    documents(rangeKey: Int!, start: Int!, size: Int!, keywords: String, sort: Sort!): AssetMetrics
+
+    # Return the forms metric of a given form identified uniquely by its projectId, touchpoint and formId.
+    form(touchpoint: String!, assetId: String!, rangeKey: Int!, country: String, deviceType: String): FormMetric
+
+    # Return a list of forms.
+    forms(rangeKey: Int!, start: Int!, size: Int!, keywords: String, sort: Sort!): AssetMetrics
+
+    # Return the number of direct and indirect accesses to a touchpoint and its referrers
+    pathTouchpoint(touchpoint: String!, rangeKey: Int!, country: String, deviceType: String): PathTouchpointMetric
+
+    # Return the touchpoint metric of a given touchpoint identified uniquely by its projectId, touchpoint.
+    touchpoint(touchpoint: String!, rangeKey: Int!, country: String, deviceType: String): TouchpointMetric
+
+    # Return a list of touchpoint.
+    touchpoints(rangeKey: Int!, start: Int!, size: Int!, keywords: String, sort: Sort!): AssetMetrics
+
+    # Return the web content metric of a given web content identified uniquely by its projectId, touchpoint and webContentId.
+    webContent(touchpoint: String!, assetId: String!, rangeKey: Int!, country: String, deviceType: String): WebContentMetric
+
+    # Return a list of web contents.
+    webContents(rangeKey: Int!, start: Int!, size: Int!, keywords: String, sort: Sort!): AssetMetrics
+}
+
+enum AssetType {
+    BLOG
+    DOCUMENT
+    FORM
+    WEB_CONTENT
+}
+
+enum SortType {
+    ASC
+    DESC
+}
+
+input Sort {
+    column: String!
+    type: SortType!
+}
+
+interface AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    defaultMetric: Metric
+    touchpoint: String
+}
+
+type AssetMetrics {
+    assetMetrics: [AssetMetric]
+    total: Long
+}
+
+type BlogMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    comments: Metric
+    defaultMetric: Metric
+    ratings: Metric
+    readingTime: Metric
+    shares: Metric
+    touchpoint: String
+    views: Metric
+}
+
+type DocumentMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    comments: Metric
+    defaultMetric: Metric
+    downloads: Metric
+    previews: Metric
+    ratings: Metric
+    touchpoint: String
+}
+
+type FormMetric implements AssetMetric {
+    abandonments: Metric
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    completionTime: Metric
+    defaultMetric: Metric
+    formPageMetrics: [FormPageMetric]
+    submissions: Metric
+    touchpoint: String
+    views: Metric
+}
+
+type FormFieldMetric {
+    fieldAbandonments: Metric
+    fieldEmpty: Metric
+    fieldInteractionDuration: Metric
+    fieldInteractions: Metric
+    fieldName: String
+    fieldRefilled: Metric
+}
+
+type FormPageMetric {
+    formFieldMetrics: [FormFieldMetric]
+    pageAbandonments: Metric
+    pageIndex: String
+    pageViews: Metric
+}
+
+type HistogramMetric {
+    key: String
+    previousValue: Float
+    previousValueKey: String
+    trend: Trend
+    value: Float
+    valueKey: String
+}
+
+type Metric {
+    browser : [Metric]
+    device : [Metric]
+    geolocation : [Metric]
+    histogram: [HistogramMetric]
+    metrics : [Metric]
+    previousValue: Float
+    previousValueKey: String
+    segment : [Metric]
+    trend: Trend
+    value: Float
+    valueKey: String
+}
+
+type PathTouchpointMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    defaultMetric: Metric
+    directAccess: Metric
+    indirectAccess: Metric
+    pathTouchpointReferrerMetrics: [PathTouchpointReferrerMetric]
+    totalAccess: Metric
+    touchpoint: String
+}
+
+type PathTouchpointReferrerMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    defaultMetric: Metric
+    referrer: String
+    total: Metric
+    touchpoint: String
+}
+
+type TouchpointMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    bounceRate: Metric
+    defaultMetric: Metric
+    engagement: Metric
+    timeOnPage: Metric
+    touchpoint: String
+    users: Metric
+    views: Metric
+}
+
+type Trend {
+    classification: String
+    percentage: Float
+}
+
+type WebContentMetric implements AssetMetric {
+    assetId: String
+    assetMetrics: [AssetMetric]
+    assetTitle: String
+    assetType: String
+    clicks: Metric
+    defaultMetric: Metric
+    touchpoint: String
+    views: Metric
+}
